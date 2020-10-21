@@ -17,32 +17,22 @@ export const contactStore: IContactStoreModel = {
 
   pushContact: action((state, payload) => {
     state.contacts.push(payload);
-    allContactsDummy.push(payload);
   }),
   updateExistingContact: action((state, payload) => {
     if (
-      allContactsDummy.findIndex((contact) => contact.id === payload.id) !==
-        -1 &&
       state.contacts.findIndex((contact) => contact.id === payload.id) !== -1
     ) {
       state.contacts = state.contacts.map((contact) =>
         contact.id === payload.id ? payload : contact
       );
-      updateDummyData(payload);
     } else {
       state.contacts.push(payload);
-      allContactsDummy.push(payload);
     }
   }),
   removeContactById: action((state, payload) => {
     const indexOfContact = state.contacts.findIndex(
       (contact) => contact.id === payload
     );
-    const indexOfContactDummy = allContactsDummy.findIndex(
-      (contact) => contact.id === payload
-    );
-
-    removeDummyDataAtIndex(indexOfContactDummy);
     state.contacts = state.contacts.splice(indexOfContact, 1);
   }),
 
@@ -55,7 +45,7 @@ export const contactStore: IContactStoreModel = {
 
   fetchContactById: thunk(async (actions, payload) => {
     // const result = await axios.get(`/contacts/${payload}`);
-    // actions.pushContact(result.data);
+    // actions.updateExistingContact(result.data);
 
     const pretendThisWasReturned = allContactsDummy.find(
       (contact) => contact.id === payload
@@ -76,19 +66,34 @@ export const contactStore: IContactStoreModel = {
     // will handle generating that id and return the entire newly created Contact
     // back to us. The line below simulates the response.
     const randomId = Math.floor(Math.random() * (50000000 - 100) + 100);
-    Object.assign(payload, { ...payload, id: randomId });
-    actions.pushContact(Object.assign(payload, { ...payload, id: randomId }));
+    const newContact = Object.assign(payload, { ...payload, id: randomId });
+    if (
+      allContactsDummy.findIndex((dummy) => dummy.id === newContact.id) !== -1
+    ) {
+      allContactsDummy.push(newContact);
+    }
+
+    actions.pushContact(newContact);
   }),
 
   modifyExistingContact: thunk(async (actions, payload) => {
     // const result = await axios.put(`/contacts/${payload.id}`);
     // actions.pushContact(payload);
+    if (
+      allContactsDummy.findIndex((contact) => contact.id === payload.id) !== -1
+    ) {
+      updateDummyData(payload);
+    }
 
     actions.updateExistingContact(payload);
   }),
 
   deleteContact: thunk(async (actions, payload) => {
     // const result = await axios.delete(`/contacts/${payload}`);
+    const indexOfContactDummy = allContactsDummy.findIndex(
+      (contact) => contact.id === payload
+    );
+    removeDummyDataAtIndex(indexOfContactDummy);
 
     actions.removeContactById(payload);
   }),
