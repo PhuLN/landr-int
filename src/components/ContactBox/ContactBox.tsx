@@ -1,12 +1,9 @@
 import {
   Avatar,
   Box,
-  Button,
   Card,
   CardActionArea,
-  CardActions,
   CardContent,
-  CardMedia,
   createStyles,
   Theme,
   Typography,

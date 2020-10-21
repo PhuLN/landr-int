@@ -10,11 +10,9 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
-import { action } from "easy-peasy";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useStoreActions, useStoreState } from "../../redux/typedHooks";
-import { IContact } from "../../redux/typings/IContact";
 import ContactDeletionForm from "../ContactDeletionForm/ContactDeletionForm";
 import NewContactForm from "../NewContactForm/NewContactForm";
 import SimpleModal from "../SimpleModal/SimpleModal";
@@ -81,9 +79,11 @@ const ContactPage: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     fetchContactById(parseInt(id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     selectedContact = contacts.find((contact) => contact.id === parseInt(id));
   }, [contacts]);
 
