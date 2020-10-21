@@ -67,12 +67,12 @@ export const contactStore: IContactStoreModel = {
     const randomId = Math.floor(Math.random() * (50000000 - 100) + 100);
     const newContact = Object.assign(payload, { ...payload, id: randomId });
     if (
-      allContactsDummy.findIndex((dummy) => dummy.id === newContact.id) !== -1
+      allContactsDummy.findIndex((dummy) => dummy.id === newContact.id) === -1
     ) {
       allContactsDummy.push(newContact);
     }
 
-    actions.pushContact(newContact);
+    // actions.pushContact(newContact);
   }),
 
   modifyExistingContact: thunk(async (actions, payload) => {
