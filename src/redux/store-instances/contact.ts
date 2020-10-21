@@ -1,5 +1,4 @@
 import { action, thunk } from "easy-peasy";
-import { axios } from "../../services/AxiosService";
 import {
   allContactsDummy,
   removeDummyDataAtIndex,

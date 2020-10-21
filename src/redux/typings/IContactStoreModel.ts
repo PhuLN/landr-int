@@ -1,4 +1,4 @@
-import { Action, Computed, Thunk } from "easy-peasy";
+import { Action, Thunk } from "easy-peasy";
 import { IContact } from "./IContact";
 import { IGlobalStoreModel } from "./IGlobalStoreModel";
 

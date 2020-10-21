@@ -8,7 +8,6 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
-import { useStoreActions } from "../../redux/typedHooks";
 import { IContact } from "../../redux/typings/IContact";
 
 interface IProps extends WithStyles<typeof styles> {
