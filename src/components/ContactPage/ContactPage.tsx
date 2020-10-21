@@ -10,10 +10,12 @@ import {
   withStyles,
   WithStyles,
 } from "@material-ui/core";
+import { action } from "easy-peasy";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useStoreActions, useStoreState } from "../../redux/typedHooks";
 import { IContact } from "../../redux/typings/IContact";
+import ContactDeletionForm from "../ContactDeletionForm/ContactDeletionForm";
 import NewContactForm from "../NewContactForm/NewContactForm";
 import SimpleModal from "../SimpleModal/SimpleModal";
 
@@ -45,6 +47,9 @@ const styles = (theme: Theme) => {
     contactInfoContainer: {
       padding: theme.spacing(2),
     },
+    editButton: {
+      marginRight: theme.spacing(2),
+    },
   });
 };
 
@@ -55,14 +60,19 @@ const ContactPage: React.FC<IProps> = (props) => {
   }: {
     id: string;
   } = useParams();
+  const history = useHistory();
 
   const [isModifyFormOpen, setIsModifyFormOpen] = useState(false);
+  const [isDeletionFormOpen, setIsDeletionFormOpen] = useState(false);
 
   const fetchContactById = useStoreActions(
     (actions) => actions.contacts.fetchContactById
   );
   const modifyContact = useStoreActions(
     (actions) => actions.contacts.modifyExistingContact
+  );
+  const deleteContact = useStoreActions(
+    (actions) => actions.contacts.deleteContact
   );
 
   const contacts = useStoreState((state) => state.contacts.contacts);
@@ -96,36 +106,73 @@ const ContactPage: React.FC<IProps> = (props) => {
             <Paper className={classes.contactInfoContainer}>
               {selectedContact?.phoneNumbers.map((phone, index) => {
                 return (
-                  <Typography>
+                  <Typography key={phone}>
                     Phone number #{index}: {phone}
                   </Typography>
                 );
               })}
               <Typography>Address: {selectedContact?.address}</Typography>
+              <Typography>
+                Can be reached at {selectedContact?.email}
+              </Typography>
             </Paper>
           </Box>
           <Button
             variant="outlined"
             color="primary"
+            className={classes.editButton}
             onClick={() => setIsModifyFormOpen(true)}
           >
             Edit
           </Button>
-          <SimpleModal
-            open={isModifyFormOpen}
-            onClose={() => setIsModifyFormOpen(false)}
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setIsDeletionFormOpen(true)}
           >
-            <NewContactForm
-              contact={selectedContact}
-              onSubmit={(contact) => {
-                modifyContact(contact);
-              }}
-            />
-          </SimpleModal>
+            Delete
+          </Button>
+          {renderModifyForm()}
+          {renderDeletionForm()}
         </Container>
       </>
     );
   }
+
+  function renderModifyForm(): JSX.Element {
+    return (
+      <SimpleModal
+        open={isModifyFormOpen}
+        onClose={() => setIsModifyFormOpen(false)}
+      >
+        <NewContactForm
+          contact={selectedContact}
+          onSubmit={(contact) => {
+            modifyContact(contact);
+          }}
+        />
+      </SimpleModal>
+    );
+  }
+
+  function renderDeletionForm(): JSX.Element {
+    return (
+      <SimpleModal
+        open={isDeletionFormOpen}
+        onClose={() => setIsDeletionFormOpen(false)}
+      >
+        <ContactDeletionForm
+          onSubmit={() => {
+            if (selectedContact?.id) {
+              deleteContact(selectedContact?.id);
+              history.push("/");
+            }
+          }}
+        />
+      </SimpleModal>
+    );
+  }
+
   return render();
 };
 

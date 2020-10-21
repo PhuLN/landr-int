@@ -53,3 +53,7 @@ export function updateDummyData(payload: IContact) {
     allContactsDummy.findIndex((contact) => contact.id === payload.id)
   ] = payload;
 }
+
+export function removeDummyDataAtIndex(index: number) {
+  allContactsDummy.splice(index, 1);
+}

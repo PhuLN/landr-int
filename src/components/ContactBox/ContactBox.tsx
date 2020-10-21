@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -30,15 +31,19 @@ const styles = (theme: Theme) => {
       justifyContent: "center",
       marginTop: theme.spacing(2),
     },
-    picture: {
-      maxHeight: "125px",
-      maxWidth: "125px",
-    },
+
     centerText: {
       textAlign: "center",
     },
     root: {
       margin: theme.spacing(2),
+    },
+    largeAvatar: {
+      width: "5rem",
+      height: "5rem",
+      borderRadius: "50%",
+      padding: theme.spacing(1),
+      boxShadow: "0 0 0 3px #e78267",
     },
   });
 };
@@ -51,12 +56,9 @@ const ContactBox: React.FC<IProps> = (props) => {
         <Card className={classes.contactContainer}>
           <CardActionArea>
             <Box className={classes.pictureContainer}>
-              <CardMedia
-                component="img"
-                alt={contactInfo.name}
-                height="140"
-                className={classes.picture}
-                image={contactInfo.picture || "https://i.imgur.com/doC6zz7.png"}
+              <Avatar
+                src={contactInfo.picture}
+                className={classes.largeAvatar}
               />
             </Box>
             <CardContent>
@@ -77,11 +79,6 @@ const ContactBox: React.FC<IProps> = (props) => {
                 {contactInfo.jobTitle}
               </Typography>
             </CardContent>
-            <CardActions>
-              <Button size="small" color="primary">
-                View details
-              </Button>
-            </CardActions>
           </CardActionArea>
         </Card>
       </>

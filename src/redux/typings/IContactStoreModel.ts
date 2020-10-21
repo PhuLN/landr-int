@@ -7,6 +7,7 @@ export interface IContactStoreModel {
 
   setContacts: Action<IContactStoreModel, IContact[]>;
   pushContact: Action<IContactStoreModel, IContact>;
+  updateExistingContact: Action<IContactStoreModel, IContact>;
   removeContactById: Action<IContactStoreModel, number>;
 
   fetchContacts: Thunk<IContactStoreModel>;

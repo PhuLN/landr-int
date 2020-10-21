@@ -1,5 +1,10 @@
 import { action, thunk } from "easy-peasy";
-import { allContactsDummy, updateDummyData } from "../dummyData";
+import { axios } from "../../services/AxiosService";
+import {
+  allContactsDummy,
+  removeDummyDataAtIndex,
+  updateDummyData,
+} from "../dummyData";
 import { IContact } from "../typings/IContact";
 import { IContactStoreModel } from "../typings/IContactStoreModel";
 
@@ -9,9 +14,16 @@ export const contactStore: IContactStoreModel = {
   setContacts: action((state, payload: IContact[]) => {
     state.contacts = payload;
   }),
+
   pushContact: action((state, payload) => {
+    state.contacts.push(payload);
+    allContactsDummy.push(payload);
+  }),
+  updateExistingContact: action((state, payload) => {
     if (
-      allContactsDummy.findIndex((contact) => contact.id === payload.id) !== -1
+      allContactsDummy.findIndex((contact) => contact.id === payload.id) !==
+        -1 &&
+      state.contacts.findIndex((contact) => contact.id === payload.id) !== -1
     ) {
       state.contacts = state.contacts.map((contact) =>
         contact.id === payload.id ? payload : contact
@@ -26,7 +38,11 @@ export const contactStore: IContactStoreModel = {
     const indexOfContact = state.contacts.findIndex(
       (contact) => contact.id === payload
     );
+    const indexOfContactDummy = allContactsDummy.findIndex(
+      (contact) => contact.id === payload
+    );
 
+    removeDummyDataAtIndex(indexOfContactDummy);
     state.contacts = state.contacts.splice(indexOfContact, 1);
   }),
 
@@ -39,19 +55,21 @@ export const contactStore: IContactStoreModel = {
 
   fetchContactById: thunk(async (actions, payload) => {
     // const result = await axios.get(`/contacts/${payload}`);
-    // actions.pushContact(result);
+    // actions.pushContact(result.data);
 
     const pretendThisWasReturned = allContactsDummy.find(
       (contact) => contact.id === payload
     );
 
     if (pretendThisWasReturned) {
-      actions.pushContact(pretendThisWasReturned);
+      actions.updateExistingContact(pretendThisWasReturned);
     }
   }),
 
   addNewContact: thunk(async (actions, payload, { getState }) => {
-    // const result = await axios.post(`/contacts`);
+    // const result = await axios.post(`/contacts`, {
+    //   payload,
+    // });
     // actions.pushcontact(result.data);
 
     // We'll be submitting a Contact object with the id missing as the backend
@@ -66,7 +84,7 @@ export const contactStore: IContactStoreModel = {
     // const result = await axios.put(`/contacts/${payload.id}`);
     // actions.pushContact(payload);
 
-    actions.pushContact(payload);
+    actions.updateExistingContact(payload);
   }),
 
   deleteContact: thunk(async (actions, payload) => {
